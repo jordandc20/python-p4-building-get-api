@@ -19,5 +19,43 @@ db.init_app(app)
 def index():
     return "Index for Game/Review/User API"
 
+
+@app.route('/games')
+def games():
+    games =[]
+    # first_10_games = Game.query.limit(10).all()
+    # for game in  Game.query.order_by(Game.title).all():
+    for game in  Game.query.all():
+        game_dict = {
+        "title": game.title,
+        "genre": game.genre,
+        "platform": game.platform,
+        "price": game.price,
+        }
+        games.append(game_dict)
+    response  = make_response(games,200, {"Content-Type":"application/json"})
+    ##jsonify is now default for views from Flask so no need to run
+    # response  = make_response(jsonify(games),200)
+    
+    return response
+
+
+@app.route('/games/<int:gameID>')
+def game_by_id(gameID):
+    game = Game.query.filter(Game.id == gameID).first()
+    
+    game_dict = game.to_dict()
+      
+    # game_dict = {
+    # "title": game.title,
+    # "genre": game.genre,
+    # "platform": game.platform,
+    # "price": game.price,
+    # }   
+    
+    response  = make_response(game_dict,200)
+    return response
+
 if __name__ == '__main__':
     app.run(port=5555, debug=True)
+    
